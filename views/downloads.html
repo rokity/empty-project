@@ -1,0 +1,38 @@
+
+<div id="main" class="container">
+
+    <div id="torrents" class="row center-block  jumbotron" >
+
+      <table class="table table-bordered table-responsive table-hover" >
+        @{foreach m in model.array}
+        <tr>
+          <td>@{m.torrent.id}</td>
+          <td>
+            <div class="dropdown">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    Contents
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+      @{foreach a in m.torrent.nome}
+      <li><a>@{a}</a></li>
+      @{end}
+      </ul>
+      </div>
+          </td>
+           <td>@{m.torrent.down_speed}</td>
+           <td>@{m.torrent.progress}</td>
+           <td>@{m.torrent.tot_down}</td>
+           <td>@{m.status}</td>
+        </tr>
+        @{end}
+      </table>
+    </div>
+</div>
+
+<script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
+<script>
+
+
+
+</script>
