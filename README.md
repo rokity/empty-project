@@ -1,6 +1,6 @@
 <h1>TorrentBox</h1>
 
-<h3>Useful Command Line</h3>
+<h3>Setup</h3>
 #Download NodeJS 5.1.0
 https://nodejs.org
 #Install NodeJS
@@ -18,12 +18,14 @@ $ make
 $ [sudo] make install
 ```
 
-#Download MongoDB
+#Download/Install/Setup MongoDB
 ```text
 https://docs.mongodb.org/manual/installation/
 ```
 # Run App
-  _node --harmony debug.js_
+```text
+  node --harmony debug.js
+```
 # MongoDB
   _mongo_                         #open mongo shell
   _show dbs_                      #show database

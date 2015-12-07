@@ -33,9 +33,7 @@ function view_downloads() {
 	var model = [];
 	var i = 0;
 	var findRestaurants = function(db, callback) {
-		var cursor = db.collection('downloading').find().sort({
-			lastModifiedDate: 1
-		}).limit(100);
+		var cursor = db.collection('downloading').find();
 		cursor.each(function(err, doc) {
 			self.global.assert.equal(err, null);
 			if (doc != null) {
@@ -50,7 +48,7 @@ function view_downloads() {
 	self.global.MongoClient.connect(self.global.url, function(err, db) {
 		self.global.assert.equal(null, err);
 		findRestaurants(db, function() {
-			console.log(model);
+
 			self.view('downloads', {
 				array: model
 			});
@@ -151,14 +149,16 @@ function view_download(hash) {
 	opts["path"] = "/home/riccardo/Scaricati/";
 	client.add(hash, opts, function(torrent) {
 		console.log("on add");
-		var name = [];
+		var name = torrent.name;
+		/*
 		if (torrent.files.length > 1)
 			torrent.files.forEach(function(el, i, array) {
 				name[i] = el.name;
 			});
 		else {
 			name[0] = torrent.files[0].name;
-		}
+		}*/
+
 
 		//CREATE NEW ROW
 		var insertDocument = function(db, callback) {
@@ -188,7 +188,8 @@ function view_download(hash) {
 
 
 		torrent.on('done', function() {
-			console.log('on done');
+			console.log('on done ' + torrent.name);
+
 			//EDIT ROW UPDATE
 			var updateRestaurants = function(db, callback) {
 				db.collection('downloading').updateOne({
@@ -207,6 +208,7 @@ function view_download(hash) {
 				self.global.assert.equal(null, err);
 				updateRestaurants(db, function() {
 					db.close();
+					torrent.destroy();
 				});
 			});
 
@@ -231,15 +233,16 @@ function view_download(hash) {
 			self.global.MongoClient.connect(self.global.url, function(err, db) {
 				self.global.assert.equal(null, err);
 				updateRestaurants(db, function() {
-					db.close();
+					db.close
+					console.log("torrent" + torrent.name);
+					console.log('chunk size: ' + chunkSize);
+					console.log('total downloaded: ' + torrent.downloaded);
+					console.log('download speed: ' + torrent.downloadSpeed());
+					console.log('progress: ' + torrent.progress);
+					console.log('======');
 				});
 			});
-			console.log("torrent" + torrent.infoHash);
-			console.log('chunk size: ' + chunkSize);
-			console.log('total downloaded: ' + torrent.downloaded);
-			console.log('download speed: ' + torrent.downloadSpeed());
-			console.log('progress: ' + torrent.progress);
-			console.log('======');
+
 		});
 
 	});
