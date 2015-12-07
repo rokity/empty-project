@@ -1,12 +1,33 @@
 <h1>TorrentBox</h1>
 
 <h3>Useful Command Line</h3>
+#Download NodeJS 5.1.0
+https://nodejs.org
+#Install NodeJS
+Prerequisites:
+
+* `gcc` and `g++` 4.8 or newer, or
+* `clang` and `clang++` 3.4 or newer
+* Python 2.6 or 2.7
+* GNU Make 3.81 or newer
+* libexecinfo (FreeBSD and OpenBSD only)
+
+```text
+$ ./configure
+$ make
+$ [sudo] make install
+```
+
+#Download MongoDB
+```text
+https://docs.mongodb.org/manual/installation/
+```
 # Run App
   _node --harmony debug.js_
 # MongoDB
   _mongo_                         #open mongo shell
   _show dbs_                      #show database
-  _use namedatabase_              #create new database
+  _use torrent_              #create new database
  _db.users.save( {username:"riccardo"} )_     #save the database initialized before
  _db.createCollection("downloading",{capped:false,autoIndexId:true})_     #create new collection in DB
 #mongo-express
