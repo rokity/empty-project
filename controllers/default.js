@@ -12,6 +12,22 @@ exports.install = function() {
 	F.global.url = url;
 	F.global.MongoClient = MongoClient;
 	F.global.assert = assert;
+	var mongoose = require('mongoose');
+	mongoose.connect('mongodb://localhost:27017/torrent');
+	var db = mongoose.connection;
+	db.on('error', console.error.bind(console, 'connection error:'));
+	db.once('open', function(callback) {
+		var downloadORM = mongoose.Schema({
+			torrent: [{
+				id: String,
+				nome: String,
+				down_speed: Number,
+				progress: Number,
+				tot_down: Number
+			}],
+			status: String
+		});
+	});
 
 	F.route('/', view_index);
 	F.route('/search/{name}/', view_search);
@@ -48,7 +64,8 @@ function view_downloads() {
 	self.global.MongoClient.connect(self.global.url, function(err, db) {
 		self.global.assert.equal(null, err);
 		findRestaurants(db, function() {
-
+			if (model.length == 0)
+				model = null;
 			self.view('downloads', {
 				array: model
 			});

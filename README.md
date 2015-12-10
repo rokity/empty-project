@@ -33,7 +33,7 @@ https://docs.mongodb.org/manual/installation/
  _db.users.save( {username:"riccardo"} )_     #save the database initialized before
  _db.createCollection("downloading",{capped:false,autoIndexId:true})_     #create new collection in DB
 #mongo-express
-  _cd YOUR_PATH/node_modules/mongo-express/ && node app.js -u user -p password -d database_
+  _cd node_modules/mongo-express/ && node app.js -u riccardo -p ciao -d torrent_
 
 
 #TASKS

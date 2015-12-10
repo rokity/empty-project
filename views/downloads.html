@@ -1,7 +1,13 @@
 
 <div id="main" class="container">
-  
+
     <div id="torrents" class="row center-block  jumbotron" >
+
+
+        @{if model.array ===null}
+        <h1>Oops!</h1>
+        <h3>There aren't torrent in downloading</h3>
+          @{else}
 
       <table class="table table-bordered table-responsive table-hover" >
         @{foreach m in model.array}
@@ -27,6 +33,7 @@
         </tr>
         @{end}
       </table>
+        @{fi}
     </div>
 </div>
 
