@@ -14,20 +14,18 @@ exports.install = function() {
 	F.global.assert = assert;
 	var mongoose = require('mongoose');
 	mongoose.connect('mongodb://localhost:27017/torrent');
-	var db = mongoose.connection;
-	db.on('error', console.error.bind(console, 'connection error:'));
-	db.once('open', function(callback) {
-		var downloadORM = mongoose.Schema({
-			torrent: [{
-				id: String,
-				nome: String,
-				down_speed: Number,
-				progress: Number,
-				tot_down: Number
-			}],
-			status: String
-		});
-	});
+	var Schema = mongoose.Schema;
+	var downloadingSchema=new Schema({
+		torrent: [{
+			id: String,
+			nome: String,
+			down_speed: Number,
+			progress: Number,
+			tot_down: Number
+		}],
+		status: String});
+		v
+
 
 	F.route('/', view_index);
 	F.route('/search/{name}/', view_search);
