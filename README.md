@@ -11,3 +11,6 @@
   > $ node --harmony debug.js
   > $ cd node_modules/mongo-express/ && node app.js -u riccardo -p ciao -d torrent
 ```
+#Wiki Page
+  _for_setup_installation_..._
+  [Wiki Page](https://github.com/rokity/torrentbox/wiki)
