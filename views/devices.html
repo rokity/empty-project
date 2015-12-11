@@ -1,0 +1,63 @@
+<div id="main" class="container">
+    <div id="usb" class="row center-block  jumbotron" >
+      @{if model.array }
+      <div class="table-responsive">
+      <table class="table table-bordered  table-hover" >
+        <tr><th>Name</th><th>Path</th></tr>
+        @{foreach m in model.array}
+        <tr class='clickable-row' data-href="/devices/media/riccardo/@{!m[1]}">
+          <td>
+            @{!m[1]}
+            </td>
+          <td>
+            @{!m[0]}
+          </td>
+
+            </tr>
+        @{end}
+</table>
+</div>
+<script>
+  $(document).ready(function($) {
+    $(".clickable-row").click(function() {
+        window.document.location = $(this).data("href");
+    });
+});
+</script>
+@{fi}
+@{if !model.array  && !model.contents }
+<h1>Oops !</h1>
+<h3>There is nothing here</h3>
+@{fi}
+@{if model.contents }
+<div class="table-responsive">
+<table class="table table-bordered table-hover" >
+  <tr><th>Name</th><th>Download Here</th></tr>
+  @{foreach m in model.contents}
+  <tr>
+    <td>
+      @{m[1]}
+      </td>
+      <td>
+        <div class="btn-toolbar" role="toolbar" aria-label="...">
+        <button type="button" class='btn btn-success clickable-row' data-href="/devices/@{!m[0]}">Open Folder</button>
+        <button type="button" class="btn btn-primary clickable-btn" data-href="@{!m[0]}">Download Here</button>
+      </div>
+        </td>
+        </tr>
+  @{end}
+  <table>
+  </div>
+  <script>
+    $(document).ready(function($) {
+      $(".clickable-row").click(function() {
+          window.document.location = $(this).data("href");
+      });
+      $(".clickable-btn").click(function(){
+        console.log($(this).data("href"));
+      });
+  });
+  </script>
+  @{fi}
+</div>
+</div>

@@ -8,8 +8,8 @@
         <h1>Oops!</h1>
         <h3>There aren't torrent in downloading</h3>
           @{else}
-
-      <table class="table table-bordered table-responsive table-hover" >
+          <div class="table-responsive">
+      <table class="table-bordered table-responsive table-hover" >
         @{foreach m in model.array}
         <tr>
           <td>@{m.torrent.nome}</td>
@@ -20,7 +20,7 @@
     <span class="caret"></span>
   </button>
   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-      @{foreach a in m.torrent.nome}
+      @{foreach a in m.torrent.content}
       <li><a>@{a}</a></li>
       @{end}
       </ul>
@@ -32,6 +32,7 @@
            <td>@{m.status}</td>
         </tr>
         @{end}
+      </div>
       </table>
         @{fi}
     </div>

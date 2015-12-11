@@ -1,5 +1,10 @@
 <h1>TorrentBox</h1>
-
+#TASKS
+* Finish controller view_setFolder
+      * Check if row exists
+      * Insert row
+      * Update row
+* Enable Play/Pause/Stop Button on Torrent
 <h3>Setup</h3>
 #Download NodeJS 5.1.0
 https://nodejs.org
@@ -26,21 +31,19 @@ https://docs.mongodb.org/manual/installation/
 ```text
   node --harmony debug.js
 ```
-# MongoDB
-  _mongo_                         #open mongo shell
-  _show dbs_                      #show database
-  _use torrent_              #create new database
- _db.users.save( {username:"riccardo"} )_     #save the database initialized before
- _db.createCollection("downloading",{capped:false,autoIndexId:true})_   
-   #create new collection in DB
-#mongo-express
-
+<h1>MongoDB Setup Commands</h1>
+######open mongo shell
+  _mongo_
+######show database
+  _show dbs_
+######create new database
+  _use torrent_
+######save the database initialized before
+ _db.users.save( {username:"riccardo"} )_
+######create collection downloading
+ _db.createCollection("downloading",{capped:false,autoIndexId:true})_
+######create collection folder
+   _db.createCollection("folder",{capped:false,autoIndexId:true})_
+<h1>mongo-express Setup Commands</h1>
+######Start mongo-express
   _cd node_modules/mongo-express/ && node app.js -u riccardo -p ciao -d torrent_
-
-
-#TASKS
-1)Finish Realt-Time Section
-    /downloads   <-- Socket.io --> /check_update  <--Query MongoDB --> Downloading Collection
-2)Use Templating System of TotalJS where it's possible
-2)Test on Raspberry
-3)enable Play/Pause/Stop Button on Torrent

@@ -12,19 +12,7 @@ exports.install = function() {
 	F.global.url = url;
 	F.global.MongoClient = MongoClient;
 	F.global.assert = assert;
-	var mongoose = require('mongoose');
-	mongoose.connect('mongodb://localhost:27017/torrent');
-	var Schema = mongoose.Schema;
-	var downloadingSchema=new Schema({
-		torrent: [{
-			id: String,
-			nome: String,
-			down_speed: Number,
-			progress: Number,
-			tot_down: Number
-		}],
-		status: String});
-		v
+
 
 
 	F.route('/', view_index);
@@ -32,8 +20,9 @@ exports.install = function() {
 	F.route('/download/{hash}', view_download);
 	F.route('/usage/', view_usage);
 	F.route('/downloads', view_downloads);
-	F.route('/devices', view_devices);
+	F.route('/devices/*', view_devices);
 	F.route('/check_update', view_checkUpdate);
+	F.route('/set_folder/*', view_setFolder);
 
 
 }
@@ -41,24 +30,45 @@ exports.install = function() {
 
 //Url api
 const URL = 'https://getstrike.net/api/v2/torrents/search/?phrase=';
+//GET ALL ROWS
+var model = [];
+var findRestaurants = function(db, callback) {
+	var cursor = db.collection('downloading').find();
+	var i = 0;
+	model = [];
+	cursor.each(function(err, doc) {
+		//self.global.assert.equal(err, null);
+		if (doc != null) {
+			model[i] = doc;
+			i++;
+		} else {
+			callback();
+		}
+	});
+};
+//CREATE NEW ROW
+var insertDocument = function(db, callback, torrent, files) {
+	db.collection('downloading').insertOne({
+		"torrent": {
+			"id": torrent.infoHash,
+			"nome": torrent.name,
+			"content": files,
+			"down_speed": 0,
+			"progress": 0,
+			"tot_down": 0
+		},
+		"status": "started",
+
+	}, function(err, result) {
+		console.log("Inserted a document into the downloading collection.");
+		callback(result);
+	});
+};
 
 function view_downloads() {
 	var self = this;
-	var model = [];
-	var i = 0;
-	var findRestaurants = function(db, callback) {
-		var cursor = db.collection('downloading').find();
-		cursor.each(function(err, doc) {
-			self.global.assert.equal(err, null);
-			if (doc != null) {
-				model[i] = doc;
-				i++;
-			} else {
-				callback();
-			}
-		});
-	};
 
+	var i = 0;
 	self.global.MongoClient.connect(self.global.url, function(err, db) {
 		self.global.assert.equal(null, err);
 		findRestaurants(db, function() {
@@ -67,8 +77,11 @@ function view_downloads() {
 			self.view('downloads', {
 				array: model
 			});
+			db.close();
 		});
+
 	});
+
 
 }
 
@@ -164,41 +177,26 @@ function view_download(hash) {
 	opts["path"] = "/home/riccardo/Scaricati/";
 	client.add(hash, opts, function(torrent) {
 		console.log("on add");
-		var name = torrent.name;
-		/*
+
+
+		//	LISTA TUTTI I FILE
+		var name = [];
 		if (torrent.files.length > 1)
 			torrent.files.forEach(function(el, i, array) {
 				name[i] = el.name;
 			});
 		else {
 			name[0] = torrent.files[0].name;
-		}*/
+		}
 
 
-		//CREATE NEW ROW
-		var insertDocument = function(db, callback) {
-			db.collection('downloading').insertOne({
-				"torrent": {
-					"id": torrent.infoHash,
-					"nome": name,
-					"down_speed": 0,
-					"progress": 0,
-					"tot_down": 0
-				},
-				"status": "started",
 
-			}, function(err, result) {
-				self.global.assert.equal(err, null);
-				console.log("Inserted a document into the restaurants collection.");
-				callback(result);
-			});
-		};
 		//INSERT NEW ROW
 		self.global.MongoClient.connect(self.global.url, function(err, db) {
 			self.global.assert.equal(null, err);
 			insertDocument(db, function() {
 				db.close();
-			});
+			}, torrent, name);
 		});
 
 
@@ -265,6 +263,73 @@ function view_download(hash) {
 
 }
 
+
+function getDevices(callback, self) {
+	var exec = require('child_process').exec;
+	var model = [];
+
+	function puts(error, stdout, stderr) {
+		var rows = stdout.split('\n');
+
+		rows.forEach(function(el, index, array) {
+			var path = el.substring(0, 9);
+			var i = el.indexOf(' LABEL');
+			if (i != -1) model.push([path, el.substring(i + 8, el.indexOf('UUID') - 2)]);
+		});
+		callback(model, self);
+	}
+	exec("blkid", puts);
+
+}
+
+function print(model, self) {
+	self.view('devices', {
+		array: model
+	});
+}
+
+function getFolder(path, self) {
+	var exec = require('child_process').exec;
+	var content = [];
+	path = decodeURIComponent(path).substring(8, path.length);
+
+	function puts(error, stdout, stderr) {
+		stdout.split('\n').forEach(function(el, i, ar) {
+			if (el) content.push([path + "/" + el, el]);
+		});
+		if (content.length < 0) content = null;
+		self.view('devices', {
+			contents: content
+		});
+	}
+	//need to fix bug with more occurrences of whitespace
+	var strange_path = path;
+	if (strange_path.indexOf(' ') != -1) strange_path = strange_path.substring(0,
+		strange_path.indexOf(' ')) + "\\ " + strange_path.substring(strange_path.indexOf(
+		' ') + 1, strange_path.length);
+	exec("cd " + strange_path + " && ls", puts);
+}
+
+
 function view_devices() {
 	var self = this;
+	var split = self.uri.pathname.split('/').length - 1;
+	if (split > 1)
+		getFolder(self.uri.pathname, self);
+	if (split == 1)
+		getDevices(print, self);
+
+}
+
+
+
+function view_setFolder() {
+	var self = this;
+	self.global.MongoClient.connect(self.global.url, function(err, db) {
+		self.global.assert.equal(null, err);
+		checkCollection(db, 'folder', function(names) {
+			db.close();
+			console.log(names);
+		});
+	});
 }
