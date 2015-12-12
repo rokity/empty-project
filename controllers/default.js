@@ -295,7 +295,7 @@ function getDevices(callback, self) {
 		});
 		callback(model, self);
 	}
-	exec("blkid", puts);
+	exec("sudo blkid", puts);
 
 }
 
