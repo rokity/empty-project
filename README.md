@@ -1,10 +1,8 @@
 <h1>TorrentBox</h1>
 #TASKS
-* Finish controller view_setFolder
-      * Check if row exists
-      * Insert row
-      * Update row
 * Enable Play/Pause/Stop Button on Torrent
+* Add Feature WebSocket
+* Add Feature Computational Intelligence
 
 # Run App
 ```text
@@ -13,5 +11,5 @@
 ```
 #Wiki Page
   for setup,installation,debug ....
-  
+
   [Wiki Page](https://github.com/rokity/torrentbox/wiki)
