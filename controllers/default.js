@@ -174,92 +174,109 @@ function view_download(hash) {
 
 
 	var opts = {};
-	opts["path"] = "/home/riccardo/Scaricati/";
-	client.add(hash, opts, function(torrent) {
-		console.log("on add");
 
-
-		//	LISTA TUTTI I FILE
-		var name = [];
-		if (torrent.files.length > 1)
-			torrent.files.forEach(function(el, i, array) {
-				name[i] = el.name;
-			});
-		else {
-			name[0] = torrent.files[0].name;
-		}
-
-
-
-		//INSERT NEW ROW
+	function read(callback) {
 		self.global.MongoClient.connect(self.global.url, function(err, db) {
 			self.global.assert.equal(null, err);
-			insertDocument(db, function() {
+			findFolders(db, function(rows) {
+				opts["path"] = decodeURIComponent(rows[0]['path']);
 				db.close();
-			}, torrent, name);
-		});
+				callback();
 
 
-		torrent.on('done', function() {
-			console.log('on done ' + torrent.name);
-
-			//EDIT ROW UPDATE
-			var updateRestaurants = function(db, callback) {
-				db.collection('downloading').updateOne({
-					"torrent.id": torrent.infoHash
-				}, {
-					$set: {
-						"status": "downloaded"
-					}
-				}, function(err, results) {
-					//console.log(results);
-					callback();
-				});
-			};
-			//UPDATE THE ROW
-			self.global.MongoClient.connect(self.global.url, function(err, db) {
-				self.global.assert.equal(null, err);
-				updateRestaurants(db, function() {
-					db.close();
-					torrent.destroy();
-				});
 			});
-
 		});
-		torrent.on('download', function(chunkSize) {
-			//EDIT ROW UPDATE
-			var updateRestaurants = function(db, callback) {
-				db.collection('downloading').updateOne({
-					"torrent.id": torrent.infoHash
-				}, {
-					$set: {
-						"torrent.down_speed": torrent.downloadSpeed(),
-						"torrent.progress": torrent.progress,
-						"torrent.tot_down": torrent.downloaded
-					}
-				}, function(err, results) {
-					//console.log(results);
-					callback();
+	}
+
+
+	function log() {
+		client.add(hash, opts,
+			function(torrent) {
+				console.log("on add" + opts["path"]);
+
+
+				//	LISTA TUTTI I FILE
+				var name = [];
+				if (torrent.files.length > 1)
+					torrent.files.forEach(function(el, i, array) {
+						name[i] = el.name;
+					});
+				else {
+					name[0] = torrent.files[0].name;
+				}
+
+
+
+				//INSERT NEW ROW
+				self.global.MongoClient.connect(self.global.url, function(err, db) {
+					self.global.assert.equal(null, err);
+					insertDocument(db, function() {
+						db.close();
+					}, torrent, name);
 				});
-			};
-			//UPDATE THE ROW
-			self.global.MongoClient.connect(self.global.url, function(err, db) {
-				self.global.assert.equal(null, err);
-				updateRestaurants(db, function() {
-					db.close
-					console.log("torrent" + torrent.name);
-					console.log('chunk size: ' + chunkSize);
-					console.log('total downloaded: ' + torrent.downloaded);
-					console.log('download speed: ' + torrent.downloadSpeed());
-					console.log('progress: ' + torrent.progress);
-					console.log('======');
+
+
+				torrent.on('done', function() {
+					console.log('on done ' + torrent.name);
+
+					//EDIT ROW UPDATE
+					var updateRestaurants = function(db, callback) {
+						db.collection('downloading').updateOne({
+							"torrent.id": torrent.infoHash
+						}, {
+							$set: {
+								"status": "downloaded"
+							}
+						}, function(err, results) {
+							//console.log(results);
+							callback();
+						});
+					};
+					//UPDATE THE ROW
+					self.global.MongoClient.connect(self.global.url, function(err, db) {
+						self.global.assert.equal(null, err);
+						updateRestaurants(db, function() {
+							db.close();
+							torrent.destroy();
+						});
+					});
+
 				});
+				torrent.on('download', function(chunkSize) {
+					//EDIT ROW UPDATE
+					var updateRestaurants = function(db, callback) {
+						db.collection('downloading').updateOne({
+							"torrent.id": torrent.infoHash
+						}, {
+							$set: {
+								"torrent.down_speed": torrent.downloadSpeed(),
+								"torrent.progress": torrent.progress,
+								"torrent.tot_down": torrent.downloaded
+							}
+						}, function(err, results) {
+							//console.log(results);
+							callback();
+						});
+					};
+					//UPDATE THE ROW
+					self.global.MongoClient.connect(self.global.url, function(err, db) {
+						self.global.assert.equal(null, err);
+						updateRestaurants(db, function() {
+							db.close
+							console.log("torrent" + torrent.name);
+							console.log('chunk size: ' + chunkSize);
+							console.log('total downloaded: ' + torrent.downloaded);
+							console.log('download speed: ' + torrent.downloadSpeed());
+							console.log('progress: ' + torrent.progress);
+							console.log('======');
+						});
+					});
+
+				});
+
 			});
-
-		});
-
-	});
-
+	}
+	read(log);
 
 }
 
@@ -289,9 +306,10 @@ function print(model, self) {
 }
 
 function getFolder(path, self) {
+
 	var exec = require('child_process').exec;
 	var content = [];
-	path = decodeURIComponent(path).substring(8, path.length);
+	path = decodeURIComponent(path).substring(8, decodeURIComponent(path).length);
 
 	function puts(error, stdout, stderr) {
 		stdout.split('\n').forEach(function(el, i, ar) {
@@ -307,6 +325,7 @@ function getFolder(path, self) {
 	if (strange_path.indexOf(' ') != -1) strange_path = strange_path.substring(0,
 		strange_path.indexOf(' ')) + "\\ " + strange_path.substring(strange_path.indexOf(
 		' ') + 1, strange_path.length);
+
 	exec("cd " + strange_path + " && ls", puts);
 }
 
@@ -320,16 +339,66 @@ function view_devices() {
 		getDevices(print, self);
 
 }
+/*It find rows in collection 'folder' */
+var findFolders = function(db, callback) {
+	var cursor = db.collection('folder').find();
+	var rows = [];
+	var i = 0;
+	cursor.each(function(err, doc) {
 
+		if (doc != null) {
+			rows[i] = doc;
+			i++;
+		} else {
+			callback(rows);
+		}
+	});
+};
+/* It create new row in collection 'folder' with parameter the path */
+var insertRow = function(db, callback, path) {
+	db.collection('folder').insertOne({
+		"path": path
+	}, function(err, result) {
+		console.log("Inserted a document into the folder collection.");
+		callback(result);
+	});
+};
 
+/* Update row inside collection 'folder' with parameter path,id
+ *  path means new path
+ *  id means id of row
+ */
+var updateRow = function(db, callback, path, id) {
+	db.collection('folder').updateOne({
+		"_id": id
+	}, {
+		$set: {
+			"path": path
+		}
+	}, function(err, results) {
+		callback(results);
+	});
+};
 
+/*URL    set_folder/*      URL*/
 function view_setFolder() {
 	var self = this;
 	self.global.MongoClient.connect(self.global.url, function(err, db) {
 		self.global.assert.equal(null, err);
-		checkCollection(db, 'folder', function(names) {
-			db.close();
-			console.log(names);
+		findFolders(db, function(rows) {
+
+			if (rows.length <= 0) {
+				insertRow(db, function(result) {
+					if (result['insertedCount'] == 1)
+						self.plain("done");
+				}, self.uri.pathname.substring(11, self.uri.pathname.length));
+			} else {
+				updateRow(db, function(results) {
+					self.plain("done");
+				}, self.uri.pathname.substring(11, self
+					.uri.pathname.length), rows[0]['_id']);
+			}
 		});
+
 	});
 }

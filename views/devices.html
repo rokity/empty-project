@@ -54,7 +54,12 @@
           window.document.location = $(this).data("href");
       });
       $(".clickable-btn").click(function(){
-        console.log($(this).data("href"));
+        $.ajax({
+          url: '/set_folder'+$(this).data("href")
+        })
+        .done(function() {
+          console.log("success");
+        });
       });
   });
   </script>
