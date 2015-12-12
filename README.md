@@ -1,6 +1,7 @@
 <h1>TorrentBox</h1>
-<h2>This project is until in Beta. Only If you are master on NodeJS and MongoDB download it and try to understand what do this project </h2>
-<h3>I'm not responsible of this source code, because I use for training in NodeJS and MongoDB</h3>
+<h2>This project is until in Beta. Only If you are master on NodeJS and MongoDB download it and try to understand what do this project.</h2>
+<h3>I'm not responsible of this source code, because I use for training in NodeJS and MongoDB. </br> If you want contribute to this project please leave a Issue or make a Pull</h3>
+
 #TASKS
 * Enable Play/Pause/Stop Button on Torrent
 * Add Feature WebSocket
