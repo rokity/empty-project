@@ -4,6 +4,7 @@
       <div class="table-responsive">
       <table class="table table-bordered  table-hover" >
         <tr><th>Name</th><th>Path</th></tr>
+        <tr class='clickable-row' data-href="/devices/home"><td>Home Directory</td><td>/home</td></tr>
         @{foreach m in model.array}
         <tr class='clickable-row' data-href="/devices/media/riccardo/@{!m[1]}">
           <td>
@@ -46,7 +47,7 @@
         </td>
         </tr>
   @{end}
-  <table>
+  </table>
   </div>
   <script>
     $(document).ready(function($) {
