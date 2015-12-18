@@ -314,8 +314,8 @@ function view_setFolder() {
 /*URL   /delete/*    URL*/
 function view_deleteTorrent(id){
     var self=this;
-    var Torrent=require("./Torrent.js");
-    var a=new Torrent([0,1,2,3,4,5,65],'active');
+    var downloading=require("./downloading.js");
+    var a=new downloading([0,1,2,3,4,5,65],'active');
     var DatabaseManager=require('./DatabaseManager.js');
     var dm=new DatabaseManager(self.global.url);
 

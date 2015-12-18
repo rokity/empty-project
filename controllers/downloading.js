@@ -1,10 +1,10 @@
 /**
- * TorrentORM
+ * downloading
  * @param _torrent
  * @param _status
  * @constructor
  */
-function Torrent(_torrent,_status) {
+function downloading(_torrent,_status) {
 
     if(_torrent)
     this.torrent=_torrent;
@@ -22,8 +22,8 @@ function Torrent(_torrent,_status) {
  * All ORM class need to have getTableName
  * @returns {string}
  */
-Torrent.prototype.getTableName=function(){
-    return 'downloading';
+downloading.prototype.getCollectionName=function(){
+    return downloading.constructor.name;
 }
 
 
@@ -31,10 +31,10 @@ Torrent.prototype.getTableName=function(){
  * It's a bad method
  * @returns {*}
  */
-Torrent.prototype.getTorrent=function(){
+downloading.prototype.getTorrent=function(){
     return this.torrent;
 };
 
 
 
-module.exports = Torrent;
+module.exports = downloading;

@@ -22,7 +22,7 @@ DatabaseManager.prototype.persist=function(object){
 
     this.MongoClient.connect(this.url, function(err, db) {
         console.log("Connected correctly to server");
-        var collection=db.collection(object.getTableName());
+        var collection=db.collection(object.getCollectionName());
         collection.insertOne(object,function(err,result){
             if(err) return err;
         });
@@ -70,7 +70,7 @@ DatabaseManager.prototype.confront=function(object,callback){
 
         this.MongoClient.connect(this.url, function (err, db) {
             console.log("Connected correctly to server");
-            var collection = db.collection(object.getTableName());
+            var collection = db.collection(object.getCollectionName());
             var results = collection.find(object);
             db.close();
             callback(results);
