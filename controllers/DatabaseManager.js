@@ -1,17 +1,23 @@
+/**
+ * This is a ORM class that manage the operations with DB ,
+ * @param _url
+ * @constructor
+ */
 function DatabaseManager(_url){
 
     var MongoClient = require('mongodb').MongoClient;
     var assert = require('assert');
     var ObjectId = require('mongodb').ObjectID;
-    var url = 'mongodb://localhost:27017/torrent';
+
     this.url = _url;
-    this.MongoClient = require('mongodb').MongoClient
-        , this.assert = require('assert');
+    this.MongoClient = require('mongodb').MongoClient, this.assert = require('assert');
 }
 
 
-
-
+/**
+ * Write a object on DB , persist object inside Collection from object.getTableName()
+ * @param object
+ */
 DatabaseManager.prototype.persist=function(object){
 
     this.MongoClient.connect(this.url, function(err, db) {
@@ -24,6 +30,14 @@ DatabaseManager.prototype.persist=function(object){
     });
 };
 
+
+/**
+ * Update rows with same filed of the value parameter
+ * @param _id
+ * @param field
+ * @param value
+ * @param coll
+ */
 DatabaseManager.prototype.update=function(_id,field,value,coll){
 
     this.MongoClient.connect(this.url, function(err, db) {
@@ -42,11 +56,11 @@ DatabaseManager.prototype.update=function(_id,field,value,coll){
 };
 
 
-
-
-
-
-
+/**
+ * Confront object with table and find similar
+ * @param object
+ * @param callback
+ */
 DatabaseManager.prototype.confront=function(object,callback){
 
 
