@@ -14,9 +14,7 @@ exports.install = function() {
     /*
     Web Torrent global variables
      */
-    var WebTorrent = require('webtorrent');
-    var client = new WebTorrent();
-    F.global.client = client;
+
 
     /*
     MongoDB global variables
@@ -34,6 +32,9 @@ exports.install = function() {
 
 //Url api
 const URL = 'https://getstrike.net/api/v2/torrents/search/?phrase=';
+const MongoDB='mongodb://localhost:27017/torrent';
+const WebTorrent = require('webtorrent');
+const client = new WebTorrent();
 
 
 
@@ -123,127 +124,44 @@ var insertDocument = function(db, callback, torrent, files) {
 };
 
 
-
-
-
-
-
-
-
-
+/**
+ * /download/{hash}
+ * @param hash
+ */
 function view_download(hash) {
 
     var self = this;
     self.plain("torrent started!");
-    var client = self.global.client;
+    var Utils=require('./modules/Utils');
 
+    function callback(path) {
+        var opts={};
+        opts['path'] = path;
+        client.add(hash,
+            opts,
+            function (torrent) {
 
-    var opts = {};
+                var files = Utils.getFilesFromTorrent(torrent);
+                var downloads = Utils.saveDownloads(torrent, files, MongoDB);
 
-    function read(callback) {
-        self.global.MongoClient.connect(self.global.url, function(err, db) {
-            self.global.assert.equal(null, err);
-            findFolders(db, function(rows) {
-                opts["path"] = decodeURIComponent(rows[0]['path']);
-                db.close();
-                callback();
+                torrent.on('done',
+                    function () {
+                        console.log('on done ' + torrent.name);
+                        Utils.downloadsUpdateStatus('downloaded',downloads,MongoDB);
+                    });
 
-
+                torrent.on('download',
+                    function (chunkSize) {
+                        Utils.downloadsUpdate(torrent, downloads, MongoDB);
+                        Utils.torrentPrintStatus(torrent, chunkSize);
+                    });
             });
-        });
+    }
+    Utils.getPathDefaultFolder(MongoDB,callback);
     }
 
 
-    function log() {
-        client.add(hash, opts,
-            function(torrent) {
-                console.log("on add" + opts["path"]);
 
-
-                //	LISTA TUTTI I FILE
-                var name = [];
-                if (torrent.files.length > 1)
-                    torrent.files.forEach(function(el, i, array) {
-                        name[i] = el.name;
-                    });
-                else {
-                    name[0] = torrent.files[0].name;
-                }
-
-
-
-                //INSERT NEW ROW
-                self.global.MongoClient.connect(self.global.url, function(err, db) {
-                    self.global.assert.equal(null, err);
-                    insertDocument(db, function() {
-                        db.close();
-                    }, torrent, name);
-                });
-
-
-                torrent.on('done', function() {
-                    console.log('on done ' + torrent.name);
-
-                    //EDIT ROW UPDATE
-                    var updateRestaurants = function(db, callback) {
-                        db.collection('downloading').updateOne({
-                            "torrent.id": torrent.infoHash
-                        }, {
-                            $set: {
-                                "status": "downloaded"
-                            }
-                        }, function(err, results) {
-                            //console.log(results);
-                            callback();
-                        });
-                    };
-                    //UPDATE THE ROW
-                    self.global.MongoClient.connect(self.global.url, function(err, db) {
-                        self.global.assert.equal(null, err);
-                        updateRestaurants(db, function() {
-                            db.close();
-                            torrent.destroy();
-                        });
-                    });
-
-                });
-                torrent.on('download', function(chunkSize) {
-                    //EDIT ROW UPDATE
-                    var updateRestaurants = function(db, callback) {
-                        db.collection('downloading').updateOne({
-                            "torrent.id": torrent.infoHash
-                        }, {
-                            $set: {
-                                "torrent.down_speed": torrent.downloadSpeed(),
-                                "torrent.progress": torrent.progress,
-                                "torrent.tot_down": torrent.downloaded
-                            }
-                        }, function(err, results) {
-                            //console.log(results);
-                            callback();
-                        });
-                    };
-                    //UPDATE THE ROW
-                    self.global.MongoClient.connect(self.global.url, function(err, db) {
-                        self.global.assert.equal(null, err);
-                        updateRestaurants(db, function() {
-                            db.close
-                            console.log("torrent" + torrent.name);
-                            console.log('chunk size: ' + chunkSize);
-                            console.log('total downloaded: ' + torrent.downloaded);
-                            console.log('download speed: ' + torrent.downloadSpeed());
-                            console.log('progress: ' + torrent.progress);
-                            console.log('======');
-                        });
-                    });
-
-                });
-
-            });
-    }
-    read(log);
-
-}
 
 /*It find rows in collection 'folder' */
 var findFolders = function(db, callback) {
@@ -310,20 +228,29 @@ function view_setFolder() {
 }
 
 
+var mongoose = require('mongoose');
 
-/*URL   /delete/*    URL*/
-function view_deleteTorrent(id){
+
+
+/**
+ * URL: "/delete/{id}"
+ * @param id
+ */
+function view_deleteTorrent(_id){
     var self=this;
-    var downloading=require("./downloading.js");
-    var a=new downloading([0,1,2,3,4,5,65],'active');
-    var DatabaseManager=require('./DatabaseManager.js');
-    var dm=new DatabaseManager(self.global.url);
 
-    function write_(results){
-        console.log(results);
-        self.plain('ciao');
-    };
-    dm.confront(a,write_);
+
+    var Folder=require('./Folder')(MongoDB);
+    var a =new Folder({
+        path:'/home/riccardo/Scaricati'
+    });
+    a.save(function (err) {
+        if (err) return console.error(err);
+
+    });
+
+    self.plain(_id);
+
 }
 
 

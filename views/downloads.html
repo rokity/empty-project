@@ -10,6 +10,29 @@
           @{else}
           <div class="table-responsive">
       <table class="table table-bordered  table-hover" >
+          <tr>
+              <th>
+                  Name
+              </th>
+              <th>
+                  Contents
+              </th>
+              <th>
+                  Download Speed
+              </th>
+              <th>
+                  Progress
+              </th>
+              <th>
+                  Total Downloaded
+              </th>
+              <th>
+                  Status
+              </th>
+              <th>
+                  Delete
+              </th>
+          </tr>
         @{foreach m in model.array}
         <tr>
           <td>@{m.torrent.nome}</td>
