@@ -10,29 +10,24 @@ exports.install = function() {
 
 
 // define global variables
-
-    /*
-    Web Torrent global variables
-     */
+//Example:
+//F.global.variable=a;
 
 
-    /*
-    MongoDB global variables
-     */
-    var MongoClient = require('mongodb').MongoClient;
-    var assert = require('assert');
-    var ObjectId = require('mongodb').ObjectID;
-    var url = 'mongodb://localhost:27017/torrent';
-    F.global.url = url;
-    F.global.MongoClient = MongoClient;
-    F.global.assert = assert;
+
 
 }
 
 
-//Url api
+//Url API
 const URL = 'https://getstrike.net/api/v2/torrents/search/?phrase=';
+/*
+ MongoDB global variables
+ */
 const MongoDB='mongodb://localhost:27017/torrent';
+/*
+ Web Torrent global variables
+ */
 const WebTorrent = require('webtorrent');
 const client = new WebTorrent();
 
@@ -86,42 +81,10 @@ function view_search(name) {
 
 }
 
-var model = [];
-
-var findFolders = function(db, callback) {
-    var cursor = db.collection('folder').find();
-    var rows = [];
-    var i = 0;
-    cursor.each(function(err, doc) {
-
-        if (doc != null) {
-            rows[i] = doc;
-            i++;
-        } else {
-            callback(rows);
-        }
-    });
-};
 
 
-//CREATE NEW ROW
-var insertDocument = function(db, callback, torrent, files) {
-    db.collection('downloading').insertOne({
-        "torrent": {
-            "id": torrent.infoHash,
-            "nome": torrent.name,
-            "content": files,
-            "down_speed": 0,
-            "progress": 0,
-            "tot_down": 0
-        },
-        "status": "started",
 
-    }, function(err, result) {
-        console.log("Inserted a document into the downloading collection.");
-        callback(result);
-    });
-};
+
 
 
 /**
@@ -163,72 +126,19 @@ function view_download(hash) {
 
 
 
-/*It find rows in collection 'folder' */
-var findFolders = function(db, callback) {
-    var cursor = db.collection('folder').find();
-    var rows = [];
-    var i = 0;
-    cursor.each(function(err, doc) {
 
-        if (doc != null) {
-            rows[i] = doc;
-            i++;
-        } else {
-            callback(rows);
-        }
-    });
-};
-/* It create new row in collection 'folder' with parameter the path */
-var insertRow = function(db, callback, path) {
-    db.collection('folder').insertOne({
-        "path": path
-    }, function(err, result) {
-        console.log("Inserted a document into the folder collection.");
-        callback(result);
-    });
-};
 
-/* Update row inside collection 'folder' with parameter path,id
- *  path means new path
- *  id means id of row
- */
-var updateRow = function(db, callback, path, id) {
-    db.collection('folder').updateOne({
-        "_id": id
-    }, {
-        $set: {
-            "path": path
-        }
-    }, function(err, results) {
-        callback(results);
-    });
-};
+
+
 
 /*URL    set_folder/*      URL*/
 function view_setFolder() {
     var self = this;
-    self.global.MongoClient.connect(self.global.url, function(err, db) {
-        self.global.assert.equal(null, err);
-        findFolders(db, function(rows) {
-
-            if (rows.length <= 0) {
-                insertRow(db, function(result) {
-                    if (result['insertedCount'] == 1)
-                        self.plain("done");
-                }, self.uri.pathname.substring(11, self.uri.pathname.length));
-            } else {
-                updateRow(db, function(results) {
-                    self.plain("done");
-                }, self.uri.pathname.substring(11, self
-                    .uri.pathname.length), rows[0]['_id']);
-            }
-        });
-
-    });
+    var Utils=require('./modules/Utils');
+    Utils.setFolderPath(MongoDB,self.uri.pathname.substring(11, self.uri.pathname.length));
+    self.plain('done');
 }
 
-
-var mongoose = require('mongoose');
 
 
 
@@ -240,14 +150,8 @@ function view_deleteTorrent(_id){
     var self=this;
 
 
-    var Folder=require('./Folder')(MongoDB);
-    var a =new Folder({
-        path:'/home/riccardo/Scaricati'
-    });
-    a.save(function (err) {
-        if (err) return console.error(err);
-
-    });
+    var Utils=require('./modules/Utils');
+    Utils.deleteDownloadsByHash(MongoDB,_id);
 
     self.plain(_id);
 

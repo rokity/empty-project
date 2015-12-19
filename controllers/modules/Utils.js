@@ -24,7 +24,7 @@ exports.getFilesFromTorrent=function(torrent){
  * @returns {String}  Return path field
  */
 exports.getPathDefaultFolder=function(url,callback){
-    var Folder=require('./../Folder')(url);
+    var Folder=require('./Folder')(url);
 
         Folder.find(function (err, results) {
             if (err)console.error(err);
@@ -46,7 +46,7 @@ exports.getPathDefaultFolder=function(url,callback){
  */
 
 exports.saveDownloads=function(torrent,files,url){
-    var Downloads=require('./../Downloads')(url);
+    var Downloads=require('./Downloads')(url);
     var d=new Downloads({
         infoHash:torrent.infoHash,
         nome:torrent.name,
@@ -86,7 +86,7 @@ exports.torrentPrintStatus=function(torrent,chunkSize){
  * @param url   MongoDB URL
  */
 exports.downloadsUpdate=function(torrent,downloads,url){
-    var Downloads=require('./../Downloads.js')(url);
+    var Downloads=require('./Downloads.js')(url);
     Downloads.findOneAndUpdate({_id:downloads.id},{
             down_speed:torrent.downloadSpeed(),
             progress:torrent.progress,
@@ -107,7 +107,7 @@ exports.downloadsUpdate=function(torrent,downloads,url){
  * @param url   Url of MongoDB
  */
 exports.downloadsUpdateStatus=function(_status,downloads,url){
-    var Downloads=require('./../Downloads.js')(url);
+    var Downloads=require('./Downloads.js')(url);
     Downloads.findOneAndUpdate({_id:downloads.id},{
     status:_status
     },{},function(err,doc){
@@ -118,3 +118,21 @@ exports.downloadsUpdateStatus=function(_status,downloads,url){
 
 
 
+exports.deleteDownloadsByHash=function(url,_infoHash){
+    var Downloads=require('./Downloads.js')(url);
+    Downloads.findOneAndRemove({infoHash:_infoHash},{},function(err){
+        if(err)console.error(err);
+    })
+}
+
+
+exports.setFolderPath=function(_url,_path){
+    var Folder=require('./Folder')(_url);
+    Folder.findOneAndRemove({},{},function(err){
+        if(err)console.error(err);
+        var a=new Folder({path:_path});
+        a.save(function(err){
+            if(err)console.error(err);
+        });
+    });
+}
