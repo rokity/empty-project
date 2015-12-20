@@ -691,7 +691,7 @@
       <workItem from="1450526164088" duration="28673000" />
       <workItem from="1450567608615" duration="4842000" />
       <workItem from="1450621400218" duration="7361000" />
-      <workItem from="1450630070310" duration="392000" />
+      <workItem from="1450630070310" duration="446000" />
     </task>
     <task id="LOCAL-00001" summary="add home directory">
       <created>1450113616196</created>
@@ -709,7 +709,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="81632000" />
+    <option name="totallyTimeSpent" value="81686000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="24" width="1366" height="720" extended-state="6" />
