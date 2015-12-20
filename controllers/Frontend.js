@@ -9,73 +9,31 @@ exports.install = function() {
 	//defince global variables ciao riccardo
 
 
-	var MongoClient = require('mongodb').MongoClient;
-	var assert = require('assert');
-	var ObjectId = require('mongodb').ObjectID;
-	var url = 'mongodb://localhost:27017/torrent';
-	F.global.url = url;
-	F.global.MongoClient = MongoClient;
-	F.global.assert = assert;
+
 
 
 
 
 
 }
+/*
+ MongoDB global variables
+ */
+const MongoDB='mongodb://localhost:27017/torrent';
 
 
 
-//GET ALL ROWS
-var model = [];
-var findRestaurants = function(db, callback) {
-	var cursor = db.collection('downloading').find();
-	var i = 0;
-	model = [];
-	cursor.each(function(err, doc) {
-		//self.global.assert.equal(err, null);
-		if (doc != null) {
-			model[i] = doc;
-			i++;
-		} else {
-			callback();
-		}
-	});
-};
-//CREATE NEW ROW
-var insertDocument = function(db, callback, torrent, files) {
-	db.collection('downloading').insertOne({
-		"torrent": {
-			"id": torrent.infoHash,
-			"nome": torrent.name,
-			"content": files,
-			"down_speed": 0,
-			"progress": 0,
-			"tot_down": 0
-		},
-		"status": "started",
-
-	}, function(err, result) {
-		console.log("Inserted a document into the downloading collection.");
-		callback(result);
-	});
-};
 
 function view_downloads() {
 	var self = this;
-
-	var i = 0;
-	self.global.MongoClient.connect(self.global.url, function(err, db) {
-		self.global.assert.equal(null, err);
-		findRestaurants(db, function() {
-			if (model.length == 0)
-				model = null;
-			self.view('downloads', {
-				array: model
-			});
-			db.close();
+	var Utils=require('./modules/Utils.js');
+	Utils.getAllDownloads(MongoDB,function(err,results){
+		self.view('downloads', {
+			array: results
 		});
-
 	});
+
+
 
 
 }
@@ -87,8 +45,6 @@ function view_downloads() {
 function view_index() {
 	var self = this;
 
-	// The "index" view is routed into the views/index.html
-	// ---> Send the response
 	self.view('index');
 }
 

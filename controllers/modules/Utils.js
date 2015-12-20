@@ -116,8 +116,11 @@ exports.downloadsUpdateStatus=function(_status,downloads,url){
 }
 
 
-
-
+/**
+ * delete document from Downloads collection
+ * @param url  Url of MongoDB
+ * @param _infoHash   Filed of Collection (Condiction)
+ */
 exports.deleteDownloadsByHash=function(url,_infoHash){
     var Downloads=require('./Downloads.js')(url);
     Downloads.findOneAndRemove({infoHash:_infoHash},{},function(err){
@@ -125,7 +128,11 @@ exports.deleteDownloadsByHash=function(url,_infoHash){
     })
 }
 
-
+/**
+ * Set the path of folder where download Torrent
+ * @param _url Url of MongoDB
+ * @param _path  Path of Folder
+ */
 exports.setFolderPath=function(_url,_path){
     var Folder=require('./Folder')(_url);
     Folder.findOneAndRemove({},{},function(err){
@@ -135,4 +142,11 @@ exports.setFolderPath=function(_url,_path){
             if(err)console.error(err);
         });
     });
+}
+
+
+
+exports.getAllDownloads=function(_url,callback) {
+    var Downloads = require('./Downloads.js')(_url);
+    Downloads.find({}, callback);
 }
