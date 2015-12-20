@@ -6,7 +6,7 @@
         <tr><th>Name</th><th>Path</th></tr>
         <tr class='clickable-row' data-href="/devices/home"><td>Home Directory</td><td>/home</td></tr>
         @{foreach m in model.array}
-        <tr class='clickable-row' data-href="/devices/media/riccardo/@{!m[1]}">
+        <tr class='clickable-row' data-href="/devices/media/@{model.user}/@{!m[1]}">
           <td>
             @{!m[1]}
             </td>

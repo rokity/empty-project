@@ -6,7 +6,8 @@ exports.install = function() {
 	F.route('/devices/*', view_devices);
 
 
-	//defince global variables ciao riccardo
+
+
 
 
 
@@ -45,6 +46,7 @@ function view_downloads() {
 function view_index() {
 	var self = this;
 
+
 	self.view('index');
 }
 
@@ -61,7 +63,7 @@ function view_usage() {
 
 
 
-function getDevices(callback, self) {
+function getDevices(callback, self,user) {
 	var exec = require('child_process').exec;
 	var model = [];
 
@@ -73,14 +75,15 @@ function getDevices(callback, self) {
 			var i = el.indexOf(' LABEL');
 			if (i != -1) model.push([path, el.substring(i + 8, el.indexOf('UUID') - 2)]);
 		});
-		callback(model, self);
+		callback(model, self,user);
 	}
 	exec("sudo blkid", puts);
 
 }
 
-function print(model, self) {
+function print(model, self,_user) {
 	self.view('devices', {
+		user:_user,
 		array: model
 	});
 }
@@ -110,13 +113,33 @@ function getFolder(path, self) {
 }
 
 
+
+function getUser(cb){
+	var exec = require('child_process').exec;
+	var user;
+	function callback(err,stdout,stderr){
+		if(err)console.error(err);
+		user=stdout.split('\n')[0];
+		cb(user);
+	}
+	exec('cd /home && ls',callback);
+
+}
+
+
 function view_devices() {
 	var self = this;
 	var split = self.uri.pathname.split('/').length - 1;
+	function afterGetUser(user){
+		console.log(user);
 	if (split > 1)
 		getFolder(self.uri.pathname, self);
 	if (split == 1)
-		getDevices(print, self);
+		getDevices(print, self,user);
+	}
+	getUser(afterGetUser);
+
+
 
 }
 
