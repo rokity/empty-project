@@ -29,6 +29,7 @@ function view_downloads() {
 	var self = this;
 	var Utils=require('./modules/Utils.js');
 	Utils.getAllDownloads(MongoDB,function(err,results){
+		console.log(results);
 		self.view('downloads', {
 			array: results
 		});

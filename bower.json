@@ -1,0 +1,28 @@
+{
+  "name": "torrentbox",
+  "description": "Torrentbox for raspberry",
+  "main": "debug.js",
+  "authors": [
+    "riccardo <radmir180@gmail.com>"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "torrent"
+  ],
+  "homepage": "https://github.com/rokity/torrentbox",
+  "moduleType": [
+    "node"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "bootstrap": "~3.3.6"
+  }
+}
