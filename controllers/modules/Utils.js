@@ -51,9 +51,7 @@ exports.saveDownloads=function(torrent,files,url){
         infoHash:torrent.infoHash,
         nome:torrent.name,
         content:files,
-        down_speed:0,
-        progress:0,
-        tot_down:0,
+        progress:0+"%",
         status:'started'
     });
     d.save(function(err){
@@ -88,9 +86,7 @@ exports.torrentPrintStatus=function(torrent,chunkSize){
 exports.downloadsUpdate=function(torrent,downloads,url){
     var Downloads=require('./Downloads.js')(url);
     Downloads.findOneAndUpdate({_id:downloads.id},{
-            down_speed:torrent.downloadSpeed()*(Math.pow(10,-6)),
-            progress:torrent.progress*100,
-            tot_down:torrent.downloaded*(Math.pow(10,-6))
+            progress:torrent.progress*100+"%"
 
         },{},function(err,doc){
         if(err)console.error(err);
@@ -149,4 +145,11 @@ exports.setFolderPath=function(_url,_path){
 exports.getAllDownloads=function(_url,callback) {
     var Downloads = require('./Downloads.js')(_url);
     Downloads.find({}, callback);
+}
+
+
+exports.socket=function(io,torrent){
+
+    var string="<tr><td>"+torrent.name+"</td><td>"+torrent.progress+"</td><td>"+torrent.files+"</td></tr>";
+    io.emit('chat message',string);
 }

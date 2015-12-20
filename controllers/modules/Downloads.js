@@ -12,9 +12,7 @@ module.exports=function(url) {
             infoHash:String,
             nome:String,
             content:[],
-            down_speed:Number,
-            progress:Number,
-            tot_down:Number,
+            progress:String,
             status:String
     });
     /**Declare Methods of Schema **/

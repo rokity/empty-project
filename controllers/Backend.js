@@ -15,7 +15,6 @@ exports.install = function() {
 
 
 
-
 }
 
 
@@ -96,7 +95,7 @@ function view_download(hash) {
     var self = this;
     self.plain("torrent started!");
     var Utils=require('./modules/Utils');
-
+    var io=require('socket.io')(F.server);
     function callback(path) {
         var opts={};
         opts['path'] = path;
@@ -104,18 +103,19 @@ function view_download(hash) {
             opts,
             function (torrent) {
 
-                var files = Utils.getFilesFromTorrent(torrent);
-                var downloads = Utils.saveDownloads(torrent, files, MongoDB);
-
+               // var files = Utils.getFilesFromTorrent(torrent);
+                // var downloads = Utils.saveDownloads(torrent, files, MongoDB);
+                console.log("added torrent");
                 torrent.on('done',
                     function () {
                         console.log('on done ' + torrent.name);
-                        Utils.downloadsUpdateStatus('downloaded',downloads,MongoDB);
+                  //      Utils.downloadsUpdateStatus('downloaded',downloads,MongoDB);
                     });
 
                 torrent.on('download',
                     function (chunkSize) {
-                        Utils.downloadsUpdate(torrent, downloads, MongoDB);
+                       // Utils.downloadsUpdate(torrent, downloads, MongoDB);
+                        Utils.socket(io,torrent);
                         Utils.torrentPrintStatus(torrent, chunkSize);
                     });
             });
