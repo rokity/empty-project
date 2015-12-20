@@ -71,9 +71,9 @@ exports.saveDownloads=function(torrent,files,url){
 exports.torrentPrintStatus=function(torrent,chunkSize){
     console.log("torrent " + torrent.name);
     console.log('chunk size: ' + chunkSize);
-    console.log('total downloaded: ' + torrent.downloaded);
-    console.log('download speed: ' + torrent.downloadSpeed());
-    console.log('progress: ' + torrent.progress);
+    console.log('total downloaded: ' + torrent.downloaded*(Math.pow(10,-6)));
+    console.log('download speed: ' + torrent.downloadSpeed()*(Math.pow(10,-6)));
+    console.log('progress: ' + torrent.progress*100+ " %");
     console.log('======');
 };
 
@@ -88,9 +88,9 @@ exports.torrentPrintStatus=function(torrent,chunkSize){
 exports.downloadsUpdate=function(torrent,downloads,url){
     var Downloads=require('./Downloads.js')(url);
     Downloads.findOneAndUpdate({_id:downloads.id},{
-            down_speed:torrent.downloadSpeed(),
-            progress:torrent.progress,
-            tot_down:torrent.downloaded
+            down_speed:torrent.downloadSpeed()*(Math.pow(10,-6)),
+            progress:torrent.progress*100,
+            tot_down:torrent.downloaded*(Math.pow(10,-6))
 
         },{},function(err,doc){
         if(err)console.error(err);
