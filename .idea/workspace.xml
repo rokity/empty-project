@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b62d8cd6-1a5d-41e2-94aa-332dfbf4e9be" name="Default" comment="Database Manager init">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="torrentbox.iws" />
@@ -184,20 +183,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="controllers" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="torrentbox" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="torrentbox" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="bower_components" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -698,7 +683,7 @@
       <workItem from="1450526164088" duration="28673000" />
       <workItem from="1450567608615" duration="4842000" />
       <workItem from="1450621400218" duration="7361000" />
-      <workItem from="1450630070310" duration="534000" />
+      <workItem from="1450630070310" duration="779000" />
     </task>
     <task id="LOCAL-00001" summary="add home directory">
       <created>1450113616196</created>
@@ -716,7 +701,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="81774000" />
+    <option name="totallyTimeSpent" value="82019000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="24" width="1366" height="720" extended-state="6" />
